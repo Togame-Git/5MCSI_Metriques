@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commits par minute</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+  <div id="chart_div"></div>
+  <script>
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+  
+    function drawChart() {
+      function fetchCommitData(dateString) {
+        return fetch(`/commits/${dateString}`)
+          .then(response => response.json())
+          .then(data => data.minutes);
+      }
+
+      const dates = ["2024-03-26T00:00:00Z", "2024-03-27T00:00:00Z"];
+
+      Promise.all(dates.map(fetchCommitData))
+        .then(commitCounts => {
+          
+          var dataTable = new google.visualization.DataTable();
+          dataTable.addColumn('string', 'Minute');
+          dataTable.addColumn('number', 'Nombre de Commits');
+          for (var i = 0; i < dates.length; i++) {
+            dataTable.addRow([new Date(dates[i]).toISOString().split('T')[1].split(':')[1], commitCounts[i]]);
+          }
+
+          
+          var options = {
+            title: 'Nombre de Commits par minute',
+            curveType: 'function',
+            legend: { position: 'bottom' }
+          };
+
+          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+          chart.draw(dataTable, options);
+        })
+        .catch(error => console.error('Erreur lors de la récupération des données :', error));
+    }
+  </script>
+</body>
+</html>
