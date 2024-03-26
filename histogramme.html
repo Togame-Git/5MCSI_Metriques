@@ -1,63 +1,39 @@
-<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <title>Metrique</title>
-    
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
     <div id="chart_div"></div>
     <script>
-      
       google.charts.load('current', { packages: ['corechart'] });
-
-      
-      google.charts.setOnLoadCallback(drawBackgroundColor);
-
-      
-      function drawBackgroundColor() {
-        function drawChart(data) {
-          
-          var dataTable = new google.visualization.DataTable();
-          dataTable.addColumn('string', 'Date');
-          dataTable.addColumn('number', 'Valeur');
-          data.results.forEach(entry => {
-            var date = new Date(entry.Jour * 1000);
-            dataTable.addRow([date.toLocaleDateString(), entry.temp]);
-          });
-
-          
-          var options = {
-            title: 'Évolution des températures de la ville de Tawarano',
-            curveType: 'function',
-            legend: { position: 'bottom' }
-          };
-
-          
-          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-          chart.draw(dataTable, options);
-        }
-
-        
-        // fetch('/tawarano/')
-        //   .then(response => response.json())
-        //   .then(data => {
-        //     drawChart(data);
-        //   });
-
-        
-        var fakeData = {
-          results: [
-            { Jour: 1630374000, temp: 25 },
-            { Jour: 1630460400, temp: 28 },
-            { Jour: 1630546800, temp: 27 },
-            { Jour: 1630633200, temp: 26 },
-            { Jour: 1630719600, temp: 24 }
-          ]
-        };
-        drawChart(fakeData); 
-      }
+      google.charts.setOnLoadCallback(drawHistogram);
+     function drawHistogram() {
+    function drawChart(data) {
+    // Convertir les données récupérées en un tableau utilisable par Google Charts
+    var dataTable = new google.visualization.DataTable();
+    dataTable.addColumn('string', 'Date');
+    dataTable.addColumn('number', 'Valeur');
+    data.results.forEach(entry => {
+      var date = new Date(entry.Jour * 1000);
+      dataTable.addRow([date.toLocaleDateString(), entry.temp]);
+    });
+    // Configurer les options de l'histogramme
+    var options = {
+      title: 'Répartition des températures de la ville de Tawarano',
+      legend: { position: 'none' }
+    };
+    var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
+    chart.draw(dataTable, options);
+  }
+  // Récupération de données depuis notre API /tawarano/
+  fetch('/tawarano/')
+    .then(response => response.json())
+    .then(data => {
+      drawChart(data);
+    })
+}
     </script>
   </body>
 </html>
