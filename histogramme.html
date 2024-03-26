@@ -3,22 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <title>Metrique</title>
-    <!-- Charger le script Google Charts depuis l'URL -->
+    
     <script src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
     <div id="chart_div"></div>
     <script>
-      // Chargement du module corechart de Google Charts
+      
       google.charts.load('current', { packages: ['corechart'] });
 
-      // Fonction de rappel lorsque Google Charts est chargé
+      
       google.charts.setOnLoadCallback(drawBackgroundColor);
 
-      // Fonction pour dessiner le graphique
+      
       function drawBackgroundColor() {
         function drawChart(data) {
-          // Convertir les données récupérées en un tableau utilisable par Google Charts
+          
           var dataTable = new google.visualization.DataTable();
           dataTable.addColumn('string', 'Date');
           dataTable.addColumn('number', 'Valeur');
@@ -27,14 +27,14 @@
             dataTable.addRow([date.toLocaleDateString(), entry.temp]);
           });
 
-          // Configurer les options du graphique en ligne
+          
           var options = {
             title: 'Évolution des températures de la ville de Tawarano',
             curveType: 'function',
             legend: { position: 'bottom' }
           };
 
-          // Créer le graphique
+          
           var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
           chart.draw(dataTable, options);
         }
@@ -46,7 +46,7 @@
         //     drawChart(data);
         //   });
 
-        // Simulation des données (à remplacer par votre logique de récupération de données)
+        
         var fakeData = {
           results: [
             { Jour: 1630374000, temp: 25 },
@@ -56,7 +56,7 @@
             { Jour: 1630719600, temp: 24 }
           ]
         };
-        drawChart(fakeData); // Dessiner le graphique avec les données simulées
+        drawChart(fakeData); 
       }
     </script>
   </body>
