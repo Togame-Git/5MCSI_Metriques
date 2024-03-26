@@ -31,13 +31,13 @@
 
                 const ctx = document.getElementById('commitsChart').getContext('2d');
                 new Chart(ctx, {
-                    type: 'pictogram', // Utilisation du type de graphique pictogramme
+                    type: 'line', // Changement du type de graphique à ligne
                     data: {
                         labels: Array.from({length: 60}, (_, i) => i),
                         datasets: [{
                             label: 'Commits par minute',
                             data: minuteCounts,
-                            backgroundColor: 'rgba(60, 102, 202, 0.5)', // Couleur de remplissage de chaque barre
+                            backgroundColor: 'rgba(60, 102, 202, 0.2)',
                             borderColor: 'rgba(60, 102, 202, 1)',
                             borderWidth: 1
                         }]
