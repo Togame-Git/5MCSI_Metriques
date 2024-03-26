@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commits par minute</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="commitChart" width="800" height="400"></canvas>
+
+  <script>
+    function fetchCommitData(dateString) {
+      return fetch(`/extract-minutes/${dateString}`)
+        .then(response => response.json())
+        .then(data => {
+          const dateObject = new Date(data.Commit.author.date);
+          return dateObject.getMinutes();
+        });
+    }
+
+    const dates = ["2024-03-26T00:00:00Z", "2024-03-27T00:00:00Z"];
+
+    Promise.all(dates.map(fetchCommitData))
+      .then(commitCounts => {
+        const ctx = document.getElementById('commitChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: dates.map(date => new Date(date).toISOString().split('T')[1].split(':')[0] + ':00'),
+            datasets: [{
+              label: 'Commits par minute',
+              data: commitCounts,
+              borderColor: 'blue',
+              fill: false
+            }]
+          },
+          options: {
+            scales: {
+              yAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Nombre de Commits'
+                }
+              }],
+              xAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Heure'
+                }
+              }]
+            }
+          }
+        });
+      })
+      .catch(error => console.error('Erreur lors de la récupération des données :', error));
+  </script>
+</body>
+</html>
