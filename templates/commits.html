@@ -1,45 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Commits par minute</title>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commits</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div id="chart_div"></div>
-  <script>
-    google.charts.load('current', { packages: ['corechart'] });
-    google.charts.setOnLoadCallback(drawChart);
-  
-    function drawChart() {
-      function fetchCommitData(dateString) {
-        return fetch(`/commits/${dateString}`)
-          .then(response => response.json())
-          .then(data => data.minutes);
-      }
+    <canvas id="commitsChart" width="800" height="400"></canvas>
+    <script>
+        fetch('https://api.github.com/repos/ClubPandore6552/5MCSI_Metriques/commits')
+            .then(response => response.json())
+            .then(data => {
+                const commitMinutes = data.map(commit => {
+                    const commitDate = new Date(commit.commit.author.date);
+                    return commitDate.getMinutes();
+                });
 
-      const dates = ["2024-03-26T00:00:00Z", "2024-03-27T00:00:00Z"];
+                const minuteCounts = Array.from({length: 60}, () => 0);
 
-      Promise.all(dates.map(fetchCommitData))
-        .then(commitCounts => {
-          var dataTable = new google.visualization.DataTable();
-          dataTable.addColumn('string', 'Minute');
-          dataTable.addColumn('number', 'Nombre de Commits');
-          for (var i = 0; i < dates.length; i++) {
-            dataTable.addRow([new Date(dates[i]).toISOString().split('T')[1].split(':')[1], commitCounts[i]]);
-          }
-          
-          var options = {
-            title: 'Nombre de Commits par minute',
-            curveType: 'function',
-            legend: { position: 'bottom' }
-          };
+                commitMinutes.forEach(minute => {
+                    minuteCounts[minute]++;
+                });
 
-          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-          chart.draw(dataTable, options);
-        })
-        .catch(error => console.error('Erreur lors de la récupération des données :', error));
-    }
-  </script>
+                const ctx = document.getElementById('commitsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Array.from({length: 60}, (_, i) => i),
+                        datasets: [{
+                            label: 'Commits par minute',
+                            data: minuteCounts,
+                            backgroundColor: 'rgba(60, 102, 202, 0.2)',
+                            borderColor: 'rgba(60, 102, 202, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Erreur lors de la récupération des données de commits:', error));
+    </script>
 </body>
 </html>
