@@ -38,7 +38,7 @@
   textarea {
     resize: vertical;
   }
-  input[type="submit"] {
+  .submit-button {
     background-color: #0b74a5;
     color: white;
     padding: 15px 20px;
@@ -46,9 +46,23 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    position: relative;
+    overflow: hidden;
   }
-  input[type="submit"]:hover {
+  .submit-button:hover {
     background-color: #000000;
+  }
+  .submit-button::after {
+    content: " ";
+    background: url('thankyou_image.jpg') no-repeat;
+    background-size: cover;
+    opacity: 0.7;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
   }
 </style>
 </head>
@@ -63,9 +77,8 @@
   <input type="text" id="lname" name="lastname" required><br>
   <label for="message">Message:</label><br>
   <textarea id="message" name="message" rows="4" required></textarea><br>
-  <input type="submit" value="Envoyer">
+  <input type="submit" value="Envoyer" class="submit-button">
 </form>
 
 </body>
 </html>
-
